@@ -23,15 +23,26 @@
 
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				<div class="navbar-nav">
-					<a href="${pageContext.request.contextPath}/welcome" class="nav-item nav-link">Главная</a>
-					<a href="${pageContext.request.contextPath}/personal/${sessionScope.user.id}" class="nav-item nav-link">Мои билеты</a>
+					<a href="${pageContext.request.contextPath}/welcome" class="nav-item nav-link">
+						<i class="fas fa-home"></i> Главная
+					</a>
+					<a href="${pageContext.request.contextPath}/personal/${sessionScope.user.id}" class="nav-item nav-link">
+						<i class="fas fa-ticket-alt"></i> Мои билеты
+					</a>
 					<c:if test="${sessionScope.user.role.name eq 'ROLE_ADMIN' or sessionScope.user.role.name eq 'ROLE_MODERATOR'}">
-						<a href="${pageContext.request.contextPath}/admin/films" class="nav-item nav-link active">Фильмы</a>
+						<a href="${pageContext.request.contextPath}/admin/films" class="nav-item nav-link active">
+							<i class="fas fa-film"></i> Фильмы
+						</a>
 					</c:if>
+					<a href="${pageContext.request.contextPath}/cart/${sessionScope.user.id}" class="nav-item nav-link">
+						<i class="fas fa-shopping-cart"></i> Корзина
+					</a>
 				</div>
 				<div class="navbar-nav ml-auto">
-					<span class="navbar-text">${sessionScope.user.username}</span>
-					<a href="${pageContext.request.contextPath}/logout" class="nav-item nav-link">Logout</a>
+					<span class="navbar-text"><c:out value="${sessionScope.user.username}"/></span>
+					<a href="${pageContext.request.contextPath}/logout" class="nav-item nav-link">
+						<i class="fas fa-sign-out-alt"></i> Выйти
+					</a>
 				</div>
 			</div>
 		</nav>
