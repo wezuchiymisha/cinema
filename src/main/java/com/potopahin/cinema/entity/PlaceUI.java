@@ -11,5 +11,6 @@ import javax.persistence.*;
 @Data
 public class PlaceUI {
     private Place place;
+    private EPlaceStatus status;
     private boolean enabled;
 }

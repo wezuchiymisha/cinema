@@ -20,9 +20,60 @@
 		});
 
 	</script>
+	<script>
+        function changeTicket(value) {
+            document.getElementById("chosenTicket").value = value;
+        }
+	</script>
 	<title>Билеты</title>
 </head>
 <body>
+<form:form action="/cart/removeTicket" method="post">
+	<input id="chosenTicket" name="chosenTicket" style="display: none"/>
+	<div class="modal fade" id="removeTicketModal" tabindex="-1" role="dialog" aria-labelledby="removeTicketModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="removeTicketModalLabel">Подтверждение удаления</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Вы действительно хотите удалить данный билет из корзины?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+					<button type="submit" class="btn btn-danger">Удалить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form:form>
+
+<form:form action="/cart/pay" method="post">
+	<%--<input id="chosenTicket" name="chosenTicket" style="display: none"/>--%>
+	<div class="modal fade" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="payModalLabel">Подтверждение покупки</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Вы действительно хотите преобрести билеты на общую сумму ${sumPrice}грн?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+					<button type="submit" class="btn btn-success">Преобрести</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form:form>
+
 	<div class="container">
 		<nav class="navbar navbar-expand-md navbar-light bg-light">
 			<a href="${pageContext.request.contextPath}/welcome" class="navbar-brand">КИНТОТЕАТР</a>
@@ -35,7 +86,7 @@
 					<a href="${pageContext.request.contextPath}/welcome" class="nav-item nav-link">
 						<i class="fas fa-home"></i> Главная
 					</a>
-					<a href="${pageContext.request.contextPath}/personal/${sessionScope.user.id}" class="nav-item nav-link active">
+					<a href="${pageContext.request.contextPath}/personal/${sessionScope.user.id}" class="nav-item nav-link">
 						<i class="fas fa-ticket-alt"></i> Мои билеты
 					</a>
 					<c:if test="${sessionScope.user.role.name eq 'ROLE_ADMIN' or sessionScope.user.role.name eq 'ROLE_MODERATOR'}">
@@ -43,7 +94,7 @@
 							<i class="fas fa-film"></i> Фильмы
 						</a>
 					</c:if>
-					<a href="${pageContext.request.contextPath}/cart/${sessionScope.user.id}" class="nav-item nav-link">
+					<a href="${pageContext.request.contextPath}/cart/${sessionScope.user.id}" class="nav-item nav-link active">
 						<i class="fas fa-shopping-cart"></i> Корзина
 					</a>
 				</div>
@@ -55,7 +106,13 @@
 				</div>
 			</div>
 		</nav>
-		<h1>ВАШИ БИЛЕТЫ, ${sessionScope.user.surname} ${sessionScope.user.name}</h1>
+		<h1>ВАША КОРЗИНА
+			<c:if test="${haveTickets}">
+				, сумма: ${sumPrice}грн.
+				<button type="button" class="btn btn-primary" data-toggle="modal"
+						data-target="#payModal">Оплатить</button>
+			</c:if>
+		</h1>
 		<c:if test="${haveTickets}">
 			<table class="table table-hover">
 				<thead>
@@ -66,17 +123,28 @@
 					<th>Время</th>
 					<th>Ряд</th>
 					<th>Место</th>
+					<th>Цена</th>
+					<th>Удалить</th>
 				</tr>
 				</thead>
 				<tbody>
+
 				<c:forEach items="${tickets}" var="ticket">
 					<tr class="table-row">
 						<td><c:out value="${ticket.id}"/></td>
 						<td><c:out value="${ticket.session.film.name}"/></td>
 						<td><fmt:formatDate type="date" value="${ticket.session.startDateTime}"/></td>
 						<td><fmt:formatDate type="time" value="${ticket.session.startDateTime}" timeStyle="short"/></td>
-						<td><c:out value="${ticket.place.num}"/></td>
 						<td><c:out value="${ticket.place.row}"/></td>
+						<td><c:out value="${ticket.place.num}"/></td>
+						<td><c:out value="${ticket.session.price}"/>грн</td>
+						<td>
+							<button onclick="changeTicket(${ticket.id})" data-toggle="modal"
+									data-target="#removeTicketModal">
+								<i class="far fa-trash-alt"></i>
+							</button>
+
+						</td>
 					</tr>
 				</c:forEach>
 				</tbody>
@@ -86,7 +154,7 @@
 			<div class="container">
 				<div class="row justify-content-center">
 					<div class="d-flex justify-content-center">
-						<i class="far fa-laugh-beam"></i>&nbsp;Вы ещё не преобрели билетов. Посмотрите&nbsp;<a href="${pageContext.request.contextPath}/welcome">список сеансов</a>.
+						<i class="fas fa-magic"></i>&nbsp;Ваша корзина пуста.
 					</div>
 				</div>
 			</div>
