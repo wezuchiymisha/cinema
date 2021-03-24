@@ -13,11 +13,12 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 public class Ticket {
-    public Ticket(Date created, Session session, Place place, User user) {
+    public Ticket(Date created, Session session, Place place, User user, ETicketStatus status) {
         this.created = created;
         this.session = session;
         this.place = place;
         this.user = user;
+        this.status = status;
     }
 
     @Id
@@ -37,4 +38,8 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "TICKET_USER_ID_USER_FK"))
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 45)
+    private ETicketStatus status;
 }

@@ -20,13 +20,14 @@ public class SessionController {
     private TicketService ticketService;
 
     @RequestMapping(value = "/session/{sessionId}", method = RequestMethod.GET)
-    public String showForm(@PathVariable("sessionId") Long sessionId, Model model, HttpServletRequest request) {
+    public String showForm(@PathVariable("sessionId") Long sessionId, @RequestParam(required = false) String addedToCart, Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
+        model.addAttribute("addedToCart", addedToCart != null);
         model.addAttribute("session", sessionService.getSessionById(sessionId));
-        model.addAttribute("places", sessionService.getPlacesForSession(sessionId));
+        model.addAttribute("places", sessionService.getPlacesForSession(sessionId, user.getId()));
 
         return "sessionPage";
     }
@@ -39,6 +40,6 @@ public class SessionController {
             return "redirect:/login";
         }
         ticketService.reserveTicket(chosenSession, chosenPlace, user.getId());
-        return "redirect:personal/" + user.getId().toString();
+        return "redirect:/session/" + chosenSession.toString() + "?addedToCart=true";
     }
 }

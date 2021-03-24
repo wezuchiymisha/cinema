@@ -41,6 +41,7 @@ public class LoginController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) {
         request.getSession().setAttribute("user", null);
+        request.getSession().setAttribute("cart", null);
 	    return "redirect:/login";
 	}
 }
